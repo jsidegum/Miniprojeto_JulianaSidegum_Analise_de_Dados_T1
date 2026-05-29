@@ -48,3 +48,30 @@ df["DATA"] = pd.to_datetime(df["DATA"], dayfirst=True)
 # Como o dataframe ficou após a limpeza
 print(df.dtypes)
 print(df.head())
+
+print()
+print("ESTATÍSTICAS")
+# CL_FHL (Número de Filhos)
+filhos = df["CL_FHL"]
+print("media:", filhos.mean())
+print("mediana:", filhos.median())
+print("desvio:", filhos.std())
+print("moda:", filhos.mode()[0])
+print("min:", filhos.min())
+print("max:", filhos.max())
+print("contagem:", filhos.count())
+print("Q1:", filhos.quantile(0.25))
+print("Q2:", filhos.quantile(0.50))
+print("Q3:", filhos.quantile(0.75))
+print()
+
+print("AGRUPAMENTOS")
+# Compras por Gênero
+print(df.groupby("CL_GENERO")["CO_ID"].count())
+print()
+# Vendas por Categoria de Produto
+print(df.groupby("PR_CAT")["PR_ID"].count().sort_values(ascending=False))
+print()
+# Pivot: Gênero × Segmento
+pivot = pd.pivot_table(df, values="CO_ID", index="CL_GENERO", columns="CL_SEG", aggfunc="count")
+print(pivot)
