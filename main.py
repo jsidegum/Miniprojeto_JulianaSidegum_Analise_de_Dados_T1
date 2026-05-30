@@ -209,3 +209,55 @@ pivot = pd.pivot_table(
     fill_value=0
 )
 print(pivot)
+
+# ─────────────────────────────────────────────────────────────────────────────
+# RELATÓRIO FINAL - INSIGHTS
+# ─────────────────────────────────────────────────────────────────────────────
+
+print()
+print("=" * 65)
+print("RELATÓRIO FINAL — INSIGHTS E PROBLEMAS REMANESCENTES")
+print("=" * 65)
+
+# Calcula indicadores para o relatório
+# Gênero com mais compras: ordena e pega a primeira linha
+linha_genero = por_genero.sort_values("total_compras", ascending=False).iloc[0]
+genero_lider = linha_genero.name
+genero_pct   = linha_genero["perc_compras"]
+
+# Categoria mais vendida: ordena e pega a primeira linha
+linha_cat = por_categoria.sort_values("total_itens", ascending=False).iloc[0]
+cat_top     = linha_cat.name
+cat_top_pct = linha_cat["perc_itens"]
+
+# Registros com categoria
+if "Sem Categoria" in por_categoria.index:
+    sem_cat_n = por_categoria.loc["Sem Categoria", "total_itens"]
+else:
+    sem_cat_n = 0
+
+print(f"""
+INSIGHTS:
+  - COLUNAS FANTASMAS: As 4 colunas 'Unnamed' (100% nulas) eram artefatos de
+     formatação do arquivo CSV e foram descartadas sem perda de informação útil.
+
+  - QUALIDADE DOS DADOS: A base original continha {total_duplicados:,} linhas duplicadas
+     ({total_duplicados / (depois + total_duplicados) * 100:.1f}% do total), indicando possível falha no processo
+     de carga ou envio duplo de transações. Após remoção, restaram {depois:,} registros.
+
+  - GÊNERO COM MAIS COMPRAS: Clientes do gênero '{genero_lider}' representam
+     {genero_pct:.1f}% das compras totais, sendo o segmento mais ativo da base.
+
+  - CATEGORIA MAIS VENDIDA: '{cat_top}' é a categoria com maior volume de itens,
+     concentrando {cat_top_pct:.1f}% de todas as transações.
+
+  - PERFIL DE FILHOS (CL_FHL): A mediana é 0, indicando que a maioria dos
+     clientes não possui filhos registrados; a média de {media:.2f} é puxada por
+     clientes com até {int(maximo)} filhos. Alta assimetria à direita (desvio={desvio:.2f}).
+
+  - CATEGORIAS PROBLEMÁTICAS: {sem_cat_n:,} registros tiveram categoria substituída
+     de '#N/D' para 'Sem Categoria', pois o valor original representa dados ausentes
+     na fonte (provavelmente erro de preenchimento no sistema de origem).
+""")
+
+print("=" * 65)
